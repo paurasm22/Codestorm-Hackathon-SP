@@ -83,7 +83,7 @@ export const getDocuments = async (req, res) => {
     const {state, schemeName} = req.body;
 
     // Construct the prompt dynamically based on the user input
-    const prompt = `I reside in ${state} and would like detailed information on the required documents for the ${schemeName}. Please provide a comprehensive list of all necessary documents needed for application, along with any specific eligibility criteria or procedures unique to Maharashtra. If available, also include links to official resources or government portals where I can find the most current information on this scheme. This is for a chatbot so dont give formal messages and give gauranteed documents of the scheme asked .`;
+    const prompt = `I   would like detailed information on the required documents for the ${schemeName}. Please provide a comprehensive list of all necessary documents needed for application, along with any specific eligibility criteria or procedures . If available, also include links to official resources or government portals where I can find the most current information on this scheme. This is for a chatbot so dont give formal messages and give gauranteed documents of the scheme asked .`;
 
 
     // Call the Google Gemini API with the constructed prompt

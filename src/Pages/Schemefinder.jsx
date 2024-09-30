@@ -43,6 +43,11 @@ const Schemefinder = () => {
         <div className="bg-white p-8 border border-gray-300 rounded-lg shadow-lg max-w-md w-full">
           <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
             Find Schemes Related To
+            <br />
+            <span className="text-sm">
+              Note : All the schemes generated are based on the parameters
+              provided during registeration .{" "}
+            </span>
           </h1>
           <div className="flex justify-center mb-6">
             <select
