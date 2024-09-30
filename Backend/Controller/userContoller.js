@@ -1,0 +1,109 @@
+import { User } from "../Model/user.js";
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI('AIzaSyBf7--nw90xSkhcAiXn6Hbj0HZtRHsbUng');
+const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+
+export const register=(async(req,res)=>{
+  const {email,password,age,caste,income,gender,states,highedu,occupation,empstatus,disability,marriage}=req.body
+  try {
+    let user = await User.findOne({email})
+    if (user){
+      res.json({message:"User already exists ! ",sucess:false})
+    }
+    else{
+      const hashPass =await bcrypt.hash(password,10) 
+      user = await User.create({email,password:hashPass,age,caste,income,gender,states,highedu,occupation,empstatus,disability,marriage})
+      res.json({message:"User registered Sucessfully",sucess:true})
+    }
+
+    
+  } catch (error) {
+    res.json("Error!!")
+  }
+})
+
+
+export const login=async(req,res)=>{
+  const {email,password} = req.body;
+  try {
+    let user = await User.findOne({email})
+    if (!user) return res.json({message:"User not found !",sucess:false})
+      const validpassword=await bcrypt.compare(password,user.password)
+    if (!validpassword)return res.json({message:"Invalid Credentials",sucess:false})
+
+      const token = jwt.sign({userId:user._id},"@#$$##%%",{
+        expiresIn:'365d'
+      })
+      
+      res.json({message:`Matched Credentials `,
+        token,sucess:true
+        ,
+        admin:user.admin})
+  } catch (error) {
+    res.json({message:error.message})
+  }
+}
+export const getGovernmentSchemes = async (req, res) => {
+  try {
+    const { age, caste, income, gender, states, highedu, occupation, empstatus, disability, sector } = req.user;
+
+    // Construct the prompt dynamically based on the user input
+    const prompt = `Please provide a comprehensive list of government schemes available for a ${gender}, ${occupation}, age ${age}, residing in ${states}, currently ${empstatus} with an income of ${income}. 
+I have the following details: my highest education is ${highedu}, caste is ${caste}, and I have ${disability ? "disabilities" : "no disabilities"}. 
+I'm specifically interested in schemes related to ${sector}. For each scheme, please include eligibility criteria and any available links to application forms or relevant portals where I can apply. 
+Make sure to provide the most current information available and clarify if any details might change frequently.Dont give formal messages or reasons just give me schemes this is for a chatbot for my website . Give me schemes at any cost`;
+
+    // Call the Google Gemini API with the constructed prompt
+    const result = await model.generateContent(prompt); // Pass prompt directly
+
+    // Access the response correctly
+    const responseText = result.response.text(); // Get the text response
+
+    // Return the response back to the client
+    res.status(200).json({
+      success: true,
+      schemes: responseText, // Return the raw response text for now
+    });
+
+  } catch (error) {
+    console.error('Error generating schemes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating schemes',
+      error: error.message,
+    });
+  }
+};
+export const getDocuments = async (req, res) => {
+  try {
+    const {state, schemeName} = req.body;
+
+    // Construct the prompt dynamically based on the user input
+    const prompt = `I reside in ${state} and would like detailed information on the required documents for the ${schemeName}. Please provide a comprehensive list of all necessary documents needed for application, along with any specific eligibility criteria or procedures unique to Maharashtra. If available, also include links to official resources or government portals where I can find the most current information on this scheme. This is for a chatbot so dont give formal messages and give gauranteed documents of the scheme asked .`;
+
+
+    // Call the Google Gemini API with the constructed prompt
+    const result = await model.generateContent(prompt); // Pass prompt directly
+
+    // Access the response correctly
+    const responseText = result.response.text(); // Get the text response
+
+    // Return the response back to the client
+    res.status(200).json({
+      success: true,
+      schemes: responseText, // Return the raw response text for now
+    });
+
+  } catch (error) {
+    console.error('Error generating schemes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating schemes',
+      error: error.message,
+    });
+  }
+};
