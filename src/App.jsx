@@ -14,7 +14,8 @@ export default function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/dashboard" element={<Landing />} />
+          <Route index path="/dashboard" element={<Landing />} />
+          <Route index path="/" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/schemefinder" element={<Schemefinder />} />
