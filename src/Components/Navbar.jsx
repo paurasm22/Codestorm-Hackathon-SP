@@ -5,7 +5,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/"); // Uncomment to navigate to home on brand click
+    navigate("/dashboard"); // Uncomment to navigate to home on brand click
   };
 
   return (

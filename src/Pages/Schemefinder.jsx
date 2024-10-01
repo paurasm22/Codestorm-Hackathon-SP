@@ -1,13 +1,17 @@
-import React, { useState } from "react";
-import axios from "axios"; // Import Axios
+import React, { useState, useRef } from "react";
+import axios from "axios";
 import ReactMarkdown from "react-markdown";
 
 const Schemefinder = () => {
   const [sector, setSector] = useState(""); // State for the selected sector
+  const [scheme, setScheme] = useState("");
+
+  // Ref to the "Generated Schemes" section
+  const schemeSectionRef = useRef(null);
 
   // Get token from localStorage or other storage where it is saved
   const token = localStorage.getItem("token"); // Adjust this based on how you're storing the token
-  const [scheme, setScheme] = useState();
+
   const handleSectorChange = (e) => {
     setSector(e.target.value); // Update the selected sector
   };
@@ -28,7 +32,9 @@ const Schemefinder = () => {
 
       console.log("Schemes received from server:", response.data);
       setScheme(response.data.schemes);
-      // You can handle the display of schemes here
+
+      // Scroll to the scheme section
+      schemeSectionRef.current.scrollIntoView({ behavior: "smooth" });
     } catch (error) {
       console.error(
         "Error fetching schemes:",
@@ -45,8 +51,8 @@ const Schemefinder = () => {
             Find Schemes Related To
             <br />
             <span className="text-sm">
-              Note : All the schemes generated are based on the parameters
-              provided during registeration .{" "}
+              Note: All the schemes generated are based on the details provided
+              during registration.
             </span>
           </h1>
           <div className="flex justify-center mb-6">
@@ -78,8 +84,9 @@ const Schemefinder = () => {
         </div>
       </div>
 
-      <div className="laast h-screen p-9 px-20 ">
-        <h1 className="text-center font-extrabold text-5xl mb-16  ">
+      {/* Schemes Section */}
+      <div ref={schemeSectionRef} className="h-screen p-9 px-20 ">
+        <h1 className="text-center font-extrabold text-5xl mb-16">
           Generated Schemes
         </h1>
         <div className="container flex items-center align-middle bg-slate-400 p-10">

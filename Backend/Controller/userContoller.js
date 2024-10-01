@@ -49,11 +49,20 @@ export const login=async(req,res)=>{
 }
 export const getGovernmentSchemes = async (req, res) => {
   try {
-    const { age, caste, income, gender, states, highedu, occupation, empstatus, disability, sector } = req.user;
+    const { age, caste, income, gender, states, highedu, occupation, empstatus, disability } = req.user;
+    const {sector} = req.body;
+    console.log(age)
+    console.log(caste)
+    console.log(income)
+    console.log(gender)
+    console.log(states)
+    console.log(highedu)
+    console.log(sector)
+    console.log(disability)
 
     // Construct the prompt dynamically based on the user input
     const prompt = `Please provide a comprehensive list of government schemes available for a ${gender}, ${occupation}, age ${age}, residing in ${states}, currently ${empstatus} with an income of ${income}. 
-I have the following details: my highest education is ${highedu}, caste is ${caste}, and I have ${disability ? "disabilities" : "no disabilities"}. 
+I have the following details: my highest education is ${highedu}, caste is ${caste}, and  
 I'm specifically interested in schemes related to ${sector}. For each scheme, please include eligibility criteria and any available links to application forms or relevant portals where I can apply. 
 Make sure to provide the most current information available and clarify if any details might change frequently.Dont give formal messages or reasons just give me schemes this is for a chatbot for my website . Give me schemes at any cost`;
 
@@ -105,5 +114,58 @@ export const getDocuments = async (req, res) => {
       message: 'Error generating schemes',
       error: error.message,
     });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user; // Extract user ID from the token
+    const user = await User.find(userId).select("-password"); // Exclude password from the result
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error fetching user info", error: error.message });
+  }
+};
+
+// Update user profile based on token and provided fields
+export const updateUserProfile = async (req, res) => {
+  const { age, caste, income, gender, states, highedu, occupation, empstatus, disability, marriage } = req.body;
+
+  try {
+    const userId = req.user; // Extract user ID from the token
+    let user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Update fields if provided in the request body
+    user.age = age || user.age;
+    user.caste = caste || user.caste;
+    user.income = income || user.income;
+    user.gender = gender || user.gender;
+    user.states = states || user.states;
+    user.highedu = highedu || user.highedu;
+    user.occupation = occupation || user.occupation;
+    user.empstatus = empstatus || user.empstatus;
+    user.disability = disability || user.disability;
+    user.marriage = marriage || user.marriage;
+
+    await user.save(); // Save the updated user
+
+    res.status(200).json({
+      success: true,
+      message: "User profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error updating user info", error: error.message });
   }
 };
