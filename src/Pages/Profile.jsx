@@ -42,6 +42,9 @@ const statesArray = [
 ];
 
 const Profile = () => {
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
+  };
   const navigte = useNavigate();
   const [userData, setUserData] = useState({
     email: "",
@@ -243,6 +246,13 @@ const Profile = () => {
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
         >
           Update Profile
+        </button>
+        <button
+          onClick={handleLogout}
+          type=""
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
+        >
+          Logout
         </button>
       </form>
     </div>

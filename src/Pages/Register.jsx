@@ -263,6 +263,7 @@ const Register = () => {
             <option value="self-employed">
               Self-Employed / Small Business Owners
             </option>
+            <option value="Student">Student</option>
             <option value="government">Government Employees</option>
             <option value="defense-law-enforcement">
               Defense and Law Enforcement
