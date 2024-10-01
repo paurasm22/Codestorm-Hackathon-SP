@@ -33,12 +33,13 @@ const Landing = () => {
           <p className="text-lg text-white mb-8">
             Find the schemes that match your profile in just a few seconds.
           </p>
-          <a
+          <Link
+            to={"/schemefinder"}
             href="#"
             className="bg-red-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-red-600 transition"
           >
             Get Started
-          </a>
+          </Link>
         </div>
       </section>
 
